@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <img src="#">
+  <button id="newGif">New GIF</button>
+  <input type="text" id="searchInput" placeholder="Search for a GIF">
+<button id="searchBtn">Search</button>
+<br><br>
+<img id="gif" width="300">
+    <script>
+  const searchBtn = document.getElementById("searchBtn");
+const img = document.getElementById("gif");
+const btn = document.getElementById("newGif");
+const input = document.getElementById("searchInput");
+
+let currentSearch = "cats";
+
+async function loadGif(searchTerm){
+
+  img.alt = "Loading...";
+
+  try{
+    const response = await fetch(
+      `https://api.giphy.com/v1/gifs/translate?api_key=zZVqkr7saaX4GahvOo9JlM4VlUaETDsI&s=${searchTerm}`
+    );
+
+    if(!response.ok){
+      throw new Error("API error");
+    }
+
+    const data = await response.json();
+
+    if(!data.data){
+      img.alt = "No GIF Found!";
+      return;
+    }
+
+    img.src = data.data.images.fixed_height.url;
+
+  }catch(error){
+    img.alt = "Network error!";
+    console.log("Error loading GIF :",error);
+  }
+}
+
+// first load
+loadGif(currentSearch);
+
+// search
+searchBtn.addEventListener("click", () => {
+  currentSearch = input.value;
+  loadGif(currentSearch);
+});
+
+// new gif same term
+btn.addEventListener("click", () => {
+  loadGif(currentSearch);
+});
+</script>
+
+</body>
+</html>
